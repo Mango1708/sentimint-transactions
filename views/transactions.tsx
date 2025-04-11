@@ -14,7 +14,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ImageUp, Send, CircleX, DownloadCloud } from "lucide-react";
+import { ImageUp, Send, CircleX, DownloadCloud, Loader } from "lucide-react";
 import dayjs from "dayjs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -66,9 +66,19 @@ export const columns: ColumnDef<Transaction>[] = [
     accessorKey: "transaction_version",
     header: "Version",
     cell: ({ row }) => {
-      return <div className="font-medium">
-        <Link  className="text-blue-400 cursor-pointer" href={`https://explorer.movementnetwork.xyz/txn/${row.getValue("version")}?network=bardock+testnet`} target="_blank">{row.getValue("version")}</Link>
-      </div>;
+      return (
+        <div className="font-medium">
+          <Link
+            className="text-blue-400 cursor-pointer"
+            href={`https://explorer.movementnetwork.xyz/txn/${row.getValue(
+              "version"
+            )}?network=bardock+testnet`}
+            target="_blank"
+          >
+            {row.getValue("version")}
+          </Link>
+        </div>
+      );
     },
   },
   {
@@ -105,6 +115,8 @@ export function Transactions() {
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
+  const [downloading, setDownloading] = React.useState(false);
+
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
@@ -129,6 +141,7 @@ export function Transactions() {
 
   const handleExport = async (type: "All" | "Memories") => {
     try {
+      setDownloading(true);
       const response = await fetch(`/export-transactions?type=${type}`);
       if (!response.ok) {
         throw new Error("Error exporting transactions");
@@ -137,11 +150,16 @@ export function Transactions() {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download =type === "All" ? "transactions.xlsx" : "seal_memories_transactions.xlsx";
+      a.download =
+        type === "All"
+          ? "transactions.xlsx"
+          : "seal_memories_transactions.xlsx";
       a.click();
       window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error("Export error:", error);
+    } finally {
+      setDownloading(false);
     }
   };
   return (
@@ -200,7 +218,15 @@ export function Transactions() {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="md:ml-auto cursor-pointer">
-              Export CSV <DownloadCloud />
+              Export CSV{" "}
+              {downloading ? (
+                <Loader
+                  className="animate-spin
+"
+                />
+              ) : (
+                <DownloadCloud />
+              )}
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
@@ -218,7 +244,6 @@ export function Transactions() {
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-        
       </div>
       <div className="rounded-md border">
         <Table>

@@ -14,7 +14,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ImageUp, Send, CircleX, DownloadCloud } from "lucide-react";
+import { ImageUp, Send, CircleX, DownloadCloud, Loader } from "lucide-react";
 import dayjs from "dayjs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -79,6 +79,7 @@ export function Users() {
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
+  const [downloading, setDownloading] = React.useState(false);
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
@@ -103,6 +104,7 @@ export function Users() {
 
   const handleExport = async () => {
     try {
+      setDownloading(true);
       const response = await fetch(`/export-users`);
       if (!response.ok) {
         throw new Error("Error exporting users");
@@ -116,6 +118,8 @@ export function Users() {
       window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error("Export error:", error);
+    } finally {
+      setDownloading(false);
     }
   };
   return (
@@ -153,7 +157,15 @@ export function Users() {
           className="md:ml-auto cursor-pointer"
           onClick={() => handleExport()}
         >
-          Export CSV <DownloadCloud />
+          Export CSV{" "}
+          {!downloading ? (
+            <Loader
+              className="animate-spin
+"
+            />
+          ) : (
+            <DownloadCloud />
+          )}
         </Button>
       </div>
       <div className="rounded-md border">
