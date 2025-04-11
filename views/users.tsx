@@ -158,7 +158,7 @@ export function Users() {
           onClick={() => handleExport()}
         >
           Export CSV{" "}
-          {!downloading ? (
+          {downloading ? (
             <Loader
               className="animate-spin
 "
