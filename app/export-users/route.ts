@@ -17,7 +17,7 @@ async function exportToExcel(data: any) {
   data.forEach((us: any) => {
     worksheet.addRow({
       accountAddress: us.accountAddress,
-      createdAt: formatTimestamp(us.createdAt.timestamp),
+      createdAt: formatTimestamp(us.createdAt),
     });
   });
   const buffer = await workbook.xlsx.writeBuffer();
