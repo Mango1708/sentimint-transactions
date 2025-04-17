@@ -187,6 +187,19 @@ export function Transactions() {
       >
         Click
       </button> */}
+      <button onClick={()=> {
+        const data:any=[]
+        TRANSACTIONS.forEach((tx:any) => {
+          if(tx.user_transaction.sender !== "0x556b39a90e8e86bc27dce1e9f25a794e2c41407091d52cd3788f9e5971e48727") {
+            data.push(tx.user_transaction.sender)
+          }
+        })
+        const result =[...new Set(data)]
+        const finalData = result.map((rs) => ({
+          address: rs
+        }))
+        console.log("🚀 ~ Transactions ~ result:", finalData)
+      }}>Get Onchain User</button>
       <div className="flex items-start py-4 gap-4 flex-col md:flex-row ">
         <div className="flex relative ">
           <Input

@@ -1,4 +1,5 @@
 import { UserNav } from "@/views/nav";
+import { OnChainUsers } from "@/views/onchain-users";
 import { Transactions } from "@/views/transactions";
 import { Users } from "@/views/users";
 import Image from "next/image";
@@ -24,6 +25,9 @@ export default function Home() {
         <Transactions />
         <div className="font-semibold tracking-tight text-2xl mb-2">Users</div>
         <Users/> 
+        <div className="font-semibold tracking-tight text-2xl mb-2">Onchain Users</div>
+        <OnChainUsers/>
+
       </div>
     
   );
